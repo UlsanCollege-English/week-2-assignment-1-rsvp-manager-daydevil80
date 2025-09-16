@@ -6,33 +6,43 @@ Implement the three functions below without mutating inputs.
 """
 from typing import List, Tuple
 
-
 def dedupe_emails_case_preserve_order(emails: List[str]) -> List[str]:
-    """Return a new list with duplicate emails removed, preserving first seen.
-
-    Treat emails case-insensitively ("ALICE@x.com" == "alice@x.com").
-    Keep the first form you saw.
-
-    Ignore entries that do not contain an '@' character.
-    """
-    raise NotImplementedError
+    result = []
+    seen = []
+    for e in emails:
+        if "@" not in e:
+            continue
+        low = e.lower()
+        if low not in seen:
+            seen.append(low)
+            result.append(e)
+    return result
 
 
 def first_with_domain(emails: List[str], domain: str) -> int | None:
-    """Return the index of the first email whose domain matches `domain`.
-
-    Examples:
-        emails=["a@x.com","b@y.com"], domain="y.com" -> 1
-        no match -> None
-    Comparison is case-insensitive.
-    """
-    raise NotImplementedError
+    domain = domain.lower()
+    for i in range(len(emails)):
+        if "@" not in emails[i]:
+            continue
+        parts = emails[i].split("@")
+        if parts[1].lower() == domain:
+            return i
+    return None
 
 
 def domain_counts(emails: List[str]) -> List[Tuple[str, int]]:
-    """Return (domain, count) pairs sorted by domain (A..Z), case-insensitive.
+    counts = {}
+    for e in emails:
+        if "@" not in e:
+            continue
+        parts = e.split("@")
+        dom = parts[1].lower()
+        if dom in counts:
+            counts[dom] += 1
+        else:
+            counts[dom] = 1
 
-    Skip malformed entries without an '@'.
-    Example: ["a@x.com","b@x.com","c@y.com"] -> [("x.com", 2), ("y.com", 1)]
-    """
-    raise NotImplementedError
+    # convert dict to list of tuples and sort
+    result = list(counts.items())
+    result.sort(key=lambda x: x[0])
+    return result
